@@ -7,7 +7,8 @@ import 'package:news_app/Screens/Signup/signup_screen.dart';
 
 class NavDrawer extends StatelessWidget {
 
-
+  final String token;
+  const NavDrawer({required this.token});
 
   @override
   Widget build(BuildContext context) {

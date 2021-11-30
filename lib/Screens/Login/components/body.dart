@@ -59,9 +59,8 @@ class _BodyState extends State<Body> {
 
 
 
-    print(response.statusCode);
+    print("This is working fine ${response.statusCode}");
     var data = json.decode(response.body.toString());
-    print(response.statusCode);
     if (response.statusCode == 200) {
       print("Working here");
       await sharedPref.setString('token', data['login']['token']);

@@ -5,10 +5,10 @@ import 'package:news_app/Model/new_category.dart';
 import 'package:news_app/Model/news_bycategory.dart';
 import 'package:news_app/Pages/home.dart';
 import 'package:news_app/constant/constant.dart';
+import 'package:news_app/constant/utilis.dart';
 import 'package:news_app/widget/my_dropdown.dart';
 
-
-
+import '../../constants.dart';
 
 class AddFavorite extends StatefulWidget {
   const AddFavorite({Key? key}) : super(key: key);
@@ -18,17 +18,23 @@ class AddFavorite extends StatefulWidget {
 }
 
 class _AddFavoriteState extends State<AddFavorite> {
+
+  void toHomePage(context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => HomePage()));
+
+
+  }
+
   late Future<List<NewsCategory>> fetchResult;
   late Future<List<Site>> fetchSiteResult;
   NewsCategory? selectedCategory;
   int? selectedSiteIndex;
   bool isloading = false;
-  String? token;
+  final sharedPref = SharedPref();
 
-  void toHomePage(context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => HomePage()));
-  }
+
+
 
   @override
   void initState() {
@@ -39,6 +45,9 @@ class _AddFavoriteState extends State<AddFavorite> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: Text('Add Favorite'),
+        ),
         body: Builder(
           builder: (context) {
             return SingleChildScrollView(
@@ -67,30 +76,6 @@ class _AddFavoriteState extends State<AddFavorite> {
                         color: Colors.blue,
                         padding: EdgeInsets.all(5),
                         onPressed: () async {
-                          token = await sharedPref.getString('token');
-                          print(token);
-                          if (token != ''){
-                              Fluttertoast.showToast(
-                                msg: "Added Successful",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.blue,
-                                textColor: Colors.white,
-                                fontSize: 16.0);
-                                toHomePage(context);
-
-                          } else {
-                      Fluttertoast.showToast(
-                      msg: "Invalid Username or Password",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                      }
-
                           if (selectedSiteIndex != null &&
                               selectedCategory != null) {
                             setState(() {
@@ -99,12 +84,25 @@ class _AddFavoriteState extends State<AddFavorite> {
                             var result = await addToFavorite(
                                 selectedCategory!.id, selectedSiteIndex ?? 0);
 
-                            if (result)
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text("Added to favorite list")));
-                            else
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text("Internal server error")));
+                                if (result){
+                                  Fluttertoast.showToast(
+                                    msg: "You Have Added Favorite Successful",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.green,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0,
+                                  );
+                                  toHomePage(context);
+
+                                }
+
+
+                                else {
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                      content: Text("Internal server error")));
+                                }
                           } else {
                             Scaffold.of(context).showSnackBar(SnackBar(
                                 content:
@@ -176,7 +174,7 @@ class _AddFavoriteState extends State<AddFavorite> {
         future: fetchSiteResult,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return  MyDropDown(
+            return MyDropDown(
                 fillColor: Colors.white,
                 rightPadding: 10,
                 leftPadding: 10,
@@ -193,21 +191,17 @@ class _AddFavoriteState extends State<AddFavorite> {
                   }
 
                   print(value);
-
                 },
-
-
                 hintText: 'Select Site',
                 labelText: 'Select Site',
                 items: getListOfSites(snapshot.data),
-                value: '${snapshot.data!.first.name}',
+                value: 'Select Site',
                 validator: (string) {
                   if (string == null ||
                       string.isEmpty ||
                       string == 'Select Site') {
                     return "Select Site";
                   }
-
                   return null;
                 },
               );

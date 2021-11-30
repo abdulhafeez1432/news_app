@@ -10,7 +10,6 @@ import 'package:news_app/Model/post.dart';
 import 'package:news_app/constant/utilis.dart';
 
 final sharedPref = SharedPref();
-String? token;
 String BASE_URL = 'http://api.allnigerianewspapers.com.ng/api/';
 
 
@@ -26,16 +25,16 @@ Future<PostResponse> getNews(String? page) async {
 }
 
 Future<List<FavoriteDetails>> getFavorite() async {
-  token = await sharedPref.getString('token');
+  var token = await sharedPref.getString('token');
   final response = await http.get(
     Uri.parse('${BASE_URL}favoritedetails/'),
     headers: Utils.configHeader(token: token),
   );
 
+
+
   var favmodel;
   if (response.statusCode == 200) {
-
-    print("get favorite response=${json.encode(response.body)} ");
     var list = json.decode(response.body) as List;
     List<FavoriteDetails> listOfFavorites =
     list.map((i) => FavoriteDetails.fromJson(i)).toList();
@@ -69,7 +68,7 @@ Future<List<Site>> fetchSites() async {
       .get(Uri.parse('${BASE_URL}site/'));
 
   if (response.statusCode == 200) {
-    print("response site=${response.body}");
+
     final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
 
     return parsed.map<Site>((json) => Site.fromMap(json)).toList();
@@ -79,23 +78,37 @@ Future<List<Site>> fetchSites() async {
 }
 
 Future<bool> addToFavorite(int categorId, int siteId) async {
-  token = await sharedPref.getString('token');
+  var token = await sharedPref.getString('token');
   final response = await http.post(
     Uri.parse('${BASE_URL}addfavorite/'),
     body: jsonEncode(<String, int>{"category": categorId, "site": siteId}),
     headers: Utils.configHeader(token: token),
   );
-  print(response.statusCode);
+
   if (response.statusCode == 201) {
-    print(response.body);
+
     //return Author.fromJson(json.decode(response.body));
-    print("added to favorite=${response.body}");
+
     return Future.value(true);
   } else {
-    print('Error adding favorite ${response.body}');
+
     return Future.value(false);
   }
 }
 
 
-
+Future<PostResponse> fetchSite(String? page, String site) async {
+  final response = await http.get(Uri.parse(page ??
+      'https://api.allnigerianewspapers.com.ng/api/newscategory/$site'));
+  var newsModel;
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    newsModel = PostResponse.fromJson(jsonDecode(response.body));
+    return newsModel;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load News');
+  }
+}

@@ -25,10 +25,6 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
 
-
-
-
-
   void toFavoritePage(context) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => AddFavorite()));
@@ -43,14 +39,14 @@ class _BodyState extends State<Body> {
   final controllerUserName = TextEditingController();
   final controllerPassword = TextEditingController();
   final controllerCPassword = TextEditingController();
-final sharedPref = SharedPref();
+  final sharedPref = SharedPref();
 
   Future<void> Register() async {
     
     String BASE_URL = 'http://api.allnigerianewspapers.com.ng/api';
     final response = await http.post(
       Uri.parse('$BASE_URL/register/'),
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      headers: Utils.configHeader(),
       body: jsonEncode(
         {
           "username": controllerUserName.text,
@@ -62,10 +58,10 @@ final sharedPref = SharedPref();
       ),
     );
 
-    var data = json.decode(response.body.toString());
-    print(response.statusCode);
+    var datauser = json.decode(response.body.toString());
+    print("This response is working fine ${response.statusCode}");
     if (response.statusCode == 200) {
-      await sharedPref.setString('token', data['login']['token']);
+
       Fluttertoast.showToast(
         msg: "Registration Successful",
         toastLength: Toast.LENGTH_SHORT,
@@ -82,6 +78,7 @@ final sharedPref = SharedPref();
       controllerUserName.clear();
       controllerPassword.clear();
       controllerCPassword.clear();
+      await sharedPref.setString('token', datauser['token']);
       toFavoritePage(context);
 
     } else if (response.statusCode == 400) {

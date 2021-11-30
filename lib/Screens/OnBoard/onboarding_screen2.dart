@@ -38,19 +38,18 @@ class OnboardingScreen2 extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: 300),
-
-                  SizedBox(height: 100),
+                  SizedBox(height: 160),
                   Text(
                     'Welcome to',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    'All Nigeria Newspaper',
+                    'AllNigeria Newspapers',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
