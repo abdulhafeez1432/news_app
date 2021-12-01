@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/Model/favorite_details.dart';
 import 'package:news_app/Model/post.dart';
 import 'package:news_app/constant/constant.dart';
 
-class PostDetails extends StatelessWidget {
+class FavoriteDetailsPage extends StatelessWidget {
 
-  final Post post;
-  const PostDetails({required this.post});
+  final FavoriteDetails post;
+  const FavoriteDetailsPage({required this.post});
 
 
   @override
@@ -41,7 +42,7 @@ class PostDetails extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: Text(
-              post.title,
+              post.title.toString(),
               style: TextStyle(color: Colors.white, fontSize: 30.0),
             ),
           ),
@@ -55,7 +56,7 @@ class PostDetails extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: 10.0),
                   child: Text(
-                    post.category.name.toUpperCase(),
+                    post.category!.name.toString().toUpperCase(),
                     style: TextStyle(color: Colors.white),
                   ),
                 )),
@@ -64,7 +65,7 @@ class PostDetails extends StatelessWidget {
                 child: Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
-                      post.site.name.toUpperCase(),
+                      post.site!.name.toString().toUpperCase(),
                       style: TextStyle(color: Colors.white),
                     ))),
             //Expanded(flex: 1, child: coursePrice),
@@ -74,7 +75,7 @@ class PostDetails extends StatelessWidget {
     );
 
     final bottomContentText = Text(
-      post.content,
+      post.content.toString(),
       style: descriptionStyle,
     );
 
@@ -83,9 +84,9 @@ class PostDetails extends StatelessWidget {
         Container(
             padding: EdgeInsets.only(left: 10.0),
             height: MediaQuery.of(context).size.height * 0.5,
-            decoration: new BoxDecoration(
+            decoration: BoxDecoration(
               image: new DecorationImage(
-                image: new NetworkImage(post.imageUrl),
+                image: new NetworkImage(post.imageUrl.toString()),
                 fit: BoxFit.cover,
               ),
             )),

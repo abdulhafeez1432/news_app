@@ -1,4 +1,3 @@
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/Http/connections.dart';
@@ -7,12 +6,11 @@ import 'package:news_app/Model/new_category.dart';
 import 'package:news_app/Model/news_bycategory.dart';
 import 'package:news_app/Model/post.dart';
 import 'package:news_app/Pages/details.dart';
+import 'package:news_app/Pages/favorite_details.dart';
 import 'package:news_app/Pages/navdrawer.dart';
-import 'package:news_app/Screens/AdFavorite/add_favorite.dart';
 import 'package:news_app/Screens/NewsDetails/news_sitedetails.dart';
 import 'package:news_app/Screens/NewsDetails/search.dart';
 import 'package:news_app/constant/constant.dart';
-import 'package:news_app/constant/utilis.dart';
 import 'package:news_app/widget/appbottom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -91,7 +89,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
 
-    debugPrint(token);
+    debugPrint("Print User Token ${token}");
 
     return FutureBuilder<List<NewsCategory>>(
 
@@ -115,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                 centerTitle: true,
                 backgroundColor: Colors.green[800],
                 //All Constant Text to be moved to a const file
-                title: Text('24-7 Nigeria News'),
+                title: Text('All Nigeria Newspapers'),
               ),
               body: Text("${snapshot.error}"));
         }
@@ -126,7 +124,7 @@ class _HomePageState extends State<HomePage> {
               centerTitle: true,
               backgroundColor: Colors.green[800],
               //All Constant Text to be moved to a const file
-              title: Text('24-7 Nigeria News'),
+              title: Text('All Nigeria Newspapers'),
             ),
             body: Center(child: CircularProgressIndicator()));
       },
@@ -148,7 +146,6 @@ class _HomePageState extends State<HomePage> {
 
         body: TabBarView(
           children: [
-
             buildMainBody(context), //news
             Container(
               color: Colors.red,
@@ -168,20 +165,14 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
 
-        //_widgetOptions.elementAt(_selectedIndex);
-        //floatingActionButton: buildFloatingActionButton(context),
-        //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        //For Optimization, you can take this BottomAppBar Widget any other seperate file so that it will be easily trackable
-
         bottomNavigationBar: AppBottomNavigation(),
-        floatingActionButton: FloatingActionButton.extended(
+        floatingActionButton: FloatingActionButton(
           onPressed: () {
             toRefresh();
-            // Add your onPressed code here!
           },
-          label: const Text('Approve'),
-          icon: const Icon(Icons.thumb_up),
-          backgroundColor: Colors.pink,
+          //label: const Text('Refresh'),
+          child: const Icon(Icons.refresh),
+          backgroundColor: Colors.red,
         ),
       ),
     );
@@ -191,7 +182,7 @@ class _HomePageState extends State<HomePage> {
     return AppBar(
       backgroundColor: Colors.green[800],
       centerTitle: true,
-      title: Text('24-7 Nigeria News'),
+      title: Text('All Nigeria Newspappers'),
       bottom: PreferredSize(
           child: ColoredBox(
             //All Constant Colors to be moved to a const file
@@ -225,10 +216,8 @@ class _HomePageState extends State<HomePage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 10.0),
-          //buildSiteUI(context),
           buildYourFavoriteNewspaper(),
           _buildFutureBuilder(),
-
           SizedBox(height: 25.0),
           buildTopNigeriaPaperUI(),
           SizedBox(height: 10.0),
@@ -337,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                   //All Constant Text to be moved to a const file
                   backgroundColor: Colors.green[800],
                   centerTitle: true,
-                  title: Text('24-7 Nigeria News'),
+                  title: Text('All Nigeria Newspapers'),
                 ),
                 body: Text("${snapshot.error}"));
           }
@@ -348,7 +337,7 @@ class _HomePageState extends State<HomePage> {
                 //All Constant Text to be moved to a const file
                 backgroundColor: Colors.green[800],
                 centerTitle: true,
-                title: Text('24-7 Nigeria News'),
+                title: Text('All Nigeria Newspapers'),
               ),
               body: Center(child: CircularProgressIndicator()));
         });
@@ -377,6 +366,8 @@ class _HomePageState extends State<HomePage> {
           );
         }
         Post post = posts[index];
+
+
 
         return InkWell(
           onTap: () {
@@ -462,9 +453,15 @@ class _HomePageState extends State<HomePage> {
 
 
   FutureBuilder<List<FavoriteDetails>> _buildFutureBuilder() {
+
+    void toFavoritePage(FavoriteDetails post) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => FavoriteDetailsPage(post: post)));
+    }
     return FutureBuilder(
         future: getDataList(),
         builder: (context, snapshot) {
+
           if (snapshot.hasData) {
             return Container(
               width: double.infinity,
@@ -475,13 +472,14 @@ class _HomePageState extends State<HomePage> {
                   shrinkWrap: true,
                   itemCount: favDetails!.length.toInt(),
                   itemBuilder: (context, index) {
+                    final post = snapshot.data![index];
                     return favDetails == null
                         ? Container(
                       child: Text("Not Having Data"),
                     )
                         : InkWell(
                       onTap: () {
-                        print("Working Fine");
+                        toFavoritePage(post);
                       },
                       child: Container(
                         margin: EdgeInsets.only(right: 12.0),

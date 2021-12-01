@@ -19,7 +19,7 @@ class _AppBottomNavigationState extends State<AppBottomNavigation> {
       'label': 'Favorite',
     },
     {
-      'icon': 'assets/icons/desk.svg',
+      'icon': 'assets/icons/media-01.svg',
       'label': 'Video',
     },
     {
